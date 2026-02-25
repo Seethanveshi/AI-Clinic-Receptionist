@@ -134,3 +134,38 @@ func isWithinWorkingHours(
 
 	return true
 }
+
+func (s *AppointmentService) CancelAppointment(
+	ctx context.Context,
+	doctorID uuid.UUID,
+	phone string,
+	date time.Time,
+	startTimeStr string,
+) error {
+
+	date = date.In(s.Location)
+
+	startParsed, err := time.Parse("15:04", startTimeStr)
+	if err != nil {
+		return errors.New("invalid time format")
+	}
+
+	startTime := time.Date(
+		date.Year(),
+		date.Month(),
+		date.Day(),
+		startParsed.Hour(),
+		startParsed.Minute(),
+		0,
+		0,
+		s.Location,
+	)
+
+	return s.AppointmentRepo.Cancel(
+		ctx,
+		doctorID,
+		phone,
+		date,
+		startTime,
+	)
+}

@@ -13,6 +13,7 @@ func main() {
 	database.Connect(config.DBUrl)
 
 	r := gin.Default()
+
 	route.WebhookRouter(r)
 
 	r.Run(":" + config.Port)

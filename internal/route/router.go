@@ -36,5 +36,6 @@ func WebhookRouter(r *gin.Engine) {
 	{
 		Webhooks.POST("/book-appointment", appointmentWebhook.CreateAppointment)
 		Webhooks.POST("/check-availability", availabilityWebhook.CheckAvailability)
+		Webhooks.POST("/cancel-appointment", appointmentWebhook.Cancel)
 	}
 }

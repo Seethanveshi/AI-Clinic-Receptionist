@@ -76,3 +76,57 @@ func (h *AppointmentWebhook) CreateAppointment(c *gin.Context) {
 		"message": "appointment booked successfully",
 	})
 }
+
+type CancelRequest struct {
+	DoctorID string `json:"doctor_id"`
+	Phone string `json:"phone"`
+	Date string `json:"appointment_date"`
+	StartTime string `json:"start_time"`
+}
+
+func (h *AppointmentWebhook) Cancel(c *gin.Context) {
+
+	var req CancelRequest
+
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request",
+		})
+		return
+	}
+
+	doctorID, err := uuid.Parse(req.DoctorID)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid doctor id",
+		})
+		return
+	}
+
+	date, err := time.Parse("2006-01-02", req.Date)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid date",
+		})
+		return
+	}
+
+	err = h.appointmentService.CancelAppointment(
+		c.Request.Context(),
+		doctorID,
+		req.Phone,
+		date,
+		req.StartTime,
+	)
+
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "appointment not found",
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "appointment cancelled successfully",
+	})
+}
