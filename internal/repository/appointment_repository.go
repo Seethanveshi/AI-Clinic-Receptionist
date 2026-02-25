@@ -95,3 +95,41 @@ func (r *AppointmentRepository) Create(
 
 	return nil
 }
+
+func (r *AppointmentRepository) Cancel(
+	ctx context.Context,
+	doctorID uuid.UUID,
+	phone string,
+	date time.Time,
+	startTime time.Time,
+) error {
+
+	query := `
+		UPDATE appointments
+		SET status = 'cancelled'
+		WHERE doctor_id = $1
+		AND phone = $2
+		AND appointment_date = $3
+		AND start_time = $4
+		AND status = 'scheduled'
+	`
+
+	cmd, err := r.DB.Exec(
+		ctx,
+		query,
+		doctorID,
+		phone,
+		date,
+		startTime,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	if cmd.RowsAffected() == 0 {
+		return errors.New("appointment not found")
+	}
+
+	return nil
+}
