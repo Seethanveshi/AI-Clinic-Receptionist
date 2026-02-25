@@ -11,7 +11,7 @@ import (
 
 type CheckAvailabilityRequest struct {
 	DoctorID string `json:"doctor_id" binding:"required"`
-	Date     string `json:"date" binding:"required"` // YYYY-MM-DD
+	Date     string `json:"date" binding:"required"` 
 }
 
 type CheckAvailabilityResponse struct {
@@ -22,7 +22,7 @@ type AvailabilityWebhook struct {
 	Service *service.AvailabilityService
 }
 
-func NewAvailabilityWebhook(s *service	.AvailabilityService) *AvailabilityWebhook {
+func NewAvailabilityWebhook(s *service.AvailabilityService) *AvailabilityWebhook {
 	return &AvailabilityWebhook{Service: s}
 }
 
@@ -51,6 +51,16 @@ func (h *AvailabilityWebhook) CheckAvailability(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "invalid date format (expected YYYY-MM-DD)",
+		})
+		return
+	}
+
+	now := time.Now()
+	today := time.Date(now.Year(), now.Month(), now.Day(), 0, 0, 0, 0, h.Service.Location)
+
+	if date.Before(today) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "cannot book appointment in the past",
 		})
 		return
 	}

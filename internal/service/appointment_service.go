@@ -60,6 +60,12 @@ func (s *AppointmentService) CreateAppointment(
 		0, 0, s.Location,
 	)
 
+	now := time.Now().In(s.Location)
+
+	if !startTime.After(now) {
+		return errors.New("cannot book appointment in the past")
+	}
+
 	// Fetch consultation duration
 	durationMinutes, err := s.DoctorRepo.GetByID(ctx, doctorID)
 	if err != nil {
@@ -160,6 +166,12 @@ func (s *AppointmentService) CancelAppointment(
 		0,
 		s.Location,
 	)
+
+	now := time.Now().In(s.Location)
+
+	if !startTime.After(now) {
+		return errors.New("cannot cancel appointment in the past")
+	}
 
 	return s.AppointmentRepo.Cancel(
 		ctx,

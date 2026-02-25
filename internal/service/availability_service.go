@@ -101,9 +101,14 @@ func generateSlots(
 		end.Hour(), end.Minute(), 0, 0, loc,
 	)
 
-	for current := startTime; current.Add(time.Duration(duration)*time.Minute).Before(endTime) || 
-		current.Add(time.Duration(duration)*time.Minute).Equal(endTime); 
-		current = current.Add(time.Duration(duration) * time.Minute) {
+	now := time.Now().In(loc)
+
+	for current := startTime; current.Add(time.Duration(duration)*time.Minute).Before(endTime) ||
+		current.Add(time.Duration(duration)*time.Minute).Equal(endTime); current = current.Add(time.Duration(duration) * time.Minute) {
+
+		if current.Before(now) {
+			continue
+		}
 
 		// Exclude break time
 		if breakStart != nil && breakEnd != nil {
