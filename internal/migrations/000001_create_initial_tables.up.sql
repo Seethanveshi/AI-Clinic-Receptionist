@@ -29,7 +29,7 @@ CREATE TABLE appointments (
     doctor_id UUID NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
     patient_name TEXT NOT NULL,
     phone TEXT NOT NULL,
-    visit_type TEXT CHECK (visit_type IN ('new', 'follow-up')),
+    visit_type TEXT,
     appointment_date DATE NOT NULL,
     start_time TIME NOT NULL,
     end_time TIME NOT NULL,
@@ -37,8 +37,9 @@ CREATE TABLE appointments (
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
-CREATE UNIQUE INDEX idx_doctor_slot
-ON appointments (doctor_id, appointment_date, start_time);
+CREATE UNIQUE INDEX idx_doctor_slot_active
+ON appointments (doctor_id, appointment_date, start_time)
+WHERE status = 'scheduled';
 
 CREATE INDEX idx_appointments_doctor_date
 ON appointments (doctor_id, appointment_date);
