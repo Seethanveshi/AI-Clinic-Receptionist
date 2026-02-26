@@ -62,12 +62,22 @@ func (r *AppointmentRepository) Create(
 	date time.Time,
 	start time.Time,
 	end time.Time,
+	reason string,
 ) error {
 
 	query := `
 		INSERT INTO appointments
-		(doctor_id, patient_name, phone, visit_type, appointment_date, start_time, end_time)
-		VALUES ($1,$2,$3,$4,$5,$6,$7)
+		(
+			doctor_id,
+			patient_name,
+			phone,
+			visit_type,
+			appointment_date,
+			start_time,
+			end_time,
+			reason
+		)
+		VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
 	`
 
 	_, err := r.DB.Exec(ctx, query,
@@ -78,6 +88,7 @@ func (r *AppointmentRepository) Create(
 		date,
 		start,
 		end,
+		reason,
 	)
 
 	if err != nil {

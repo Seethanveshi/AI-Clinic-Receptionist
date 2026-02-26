@@ -38,6 +38,7 @@ func (s *AppointmentService) CreateAppointment(
 	visitType string,
 	date time.Time,
 	startTimeStr string,
+	reason string,
 ) error {
 
 	// Convert date to clinic timezone
@@ -99,6 +100,7 @@ func (s *AppointmentService) CreateAppointment(
 		date,
 		startTime,
 		endTime,
+		reason,
 	)
 
 	if err != nil {

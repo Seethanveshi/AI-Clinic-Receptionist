@@ -17,6 +17,7 @@ type CreateAppointmentRequest struct {
 	VisitType   string `json:"visit_type" binding:"required"`
 	Date        string `json:"appointment_date" binding:"required"`
 	StartTime   string `json:"start_time" binding:"required"`
+	Reason      string `json:"reason" binding:"required"`
 }
 
 type AppointmentWebhook struct {
@@ -56,6 +57,7 @@ func (h *AppointmentWebhook) CreateAppointment(c *gin.Context) {
 		req.VisitType,
 		date,
 		req.StartTime,
+		req.Reason,
 	)
 
 	if err != nil {
@@ -78,9 +80,9 @@ func (h *AppointmentWebhook) CreateAppointment(c *gin.Context) {
 }
 
 type CancelRequest struct {
-	DoctorID string `json:"doctor_id"`
-	Phone string `json:"phone"`
-	Date string `json:"appointment_date"`
+	DoctorID  string `json:"doctor_id"`
+	Phone     string `json:"phone"`
+	Date      string `json:"appointment_date"`
 	StartTime string `json:"start_time"`
 }
 
